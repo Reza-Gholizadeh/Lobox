@@ -1,0 +1,52 @@
+@import '@/styles/mixins.scss';
+@import '@/styles/tokens.scss';
+
+.container {
+  position: relative;
+  width: 300px;
+}
+
+.inputWrapper {
+  @include flex(row, wrap, flex-start, center);
+  border: 1px solid $color-border;
+  @include spacing($spacing-medium);
+  @include border-radius($radius-medium);
+  min-height: 40px;
+  gap: $spacing-small;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  min-width: 80px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid $color-border-light;
+  @include border-radius($radius-medium);
+  background: $color-bg-dropdown;
+  margin-top: $spacing-small;
+  padding: 4px 0;
+  z-index: 10;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.dropdownItem {
+  padding: 6px 12px;
+  cursor: pointer;
+  @include typography($font-size-medium);
+
+  &.highlighted {
+    background-color: $color-highlight;
+  }
+
+  &:hover {
+    background-color: $color-hover;
+  }
+}

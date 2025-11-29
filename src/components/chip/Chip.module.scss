@@ -1,0 +1,16 @@
+@import '@/styles/mixins.scss';
+@import '@/styles/tokens.scss';
+
+.chip {
+  @include flex(row, nowrap, center, center);
+  background: $color-bg-chip;
+  @include border-radius($radius-large);
+  @include spacing(4px, 8px);
+  @include typography($font-size-medium);
+}
+
+.remove {
+  margin-left: $spacing-small;
+  cursor: pointer;
+  font-weight: bold;
+}

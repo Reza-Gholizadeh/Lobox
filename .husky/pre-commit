@@ -1,0 +1,26 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# 1. TypeScript type check
+echo "Running TypeScript type check..."
+yarn tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "TypeScript check failed. Commit aborted."
+  exit 1
+fi
+
+# 2. Lint staged files
+echo "Running ESLint + Prettier on staged files..."
+npx lint-staged
+if [ $? -ne 0 ]; then
+  echo "Lint check failed. Commit aborted."
+  exit 1
+fi
+
+# 3. Run tests (only pass if all succeed)
+echo "Running Vitest..."
+yarn test --passWithNoTests
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Commit aborted."
+  exit 1
+fi

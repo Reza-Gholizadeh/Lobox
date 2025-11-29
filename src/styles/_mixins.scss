@@ -1,0 +1,23 @@
+@import './tokens.scss';
+
+@mixin spacing($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  padding: $top $right $bottom $left;
+}
+
+@mixin flex($direction: row, $wrap: nowrap, $justify: flex-start, $align: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin border-radius($radius: $radius-medium) {
+  border-radius: $radius;
+}
+
+@mixin typography($size: $font-size-medium, $weight: normal, $line-height: normal) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+}
