@@ -1,16 +1,79 @@
-# React + Vite
+# Lobox Assignment - Multi-Select Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a **React + Vite + TypeScript** application implementing a **custom multi-select component**.  
+It demonstrates advanced React patterns, including hooks, reducers, custom utilities, SCSS, testing, and pre-commit automation.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Multi-select component** with:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+  - Selecting multiple items
+  - Adding new items by typing and pressing Enter
+  - Removing items via chips
+  - Keyboard navigation (Arrow keys, Enter, Backspace, Escape)
+  - Dropdown closing when clicking outside
 
-## Expanding the ESLint configuration
+- **State management** using `useReducer` and custom hooks
+- **Debounced input handling** with `useDebounce` hook
+- **Utilities**:
+  - `filterItems` for dynamic filtering
+  - Keyboard handler helpers for cleaner code
+- **Styling** using SCSS with mixins and namespaced variables
+- **Testing** with Vitest and React Testing Library
+- **Pre-commit checks** with Husky & lint-staged:
+  - TypeScript type checking
+  - ESLint + Prettier formatting
+  - Running tests
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+## Getting Started
+
+### 1. Install dependencies
+
+```bash
+yarn install
+2. Run development server
+bash
+Copy code
+yarn dev
+Open http://localhost:5173 to view the app.
+
+3. Run tests
+bash
+Copy code
+yarn test
+4. Build for production
+bash
+Copy code
+yarn build
+Docker
+Build and run the project with Docker:
+
+bash
+Copy code
+docker build -t lobox-assignment .
+docker run -p 5173:80 lobox-assignment
+Uses nginx to serve the production build.
+
+Pre-commit Hooks
+Husky and lint-staged are configured to run automatically on commit:
+
+TypeScript type checking
+
+ESLint + Prettier on staged files
+
+Vitest test suite
+
+Utilities & Hooks
+filterItems(items, selected, inputValue) – filters dropdown options based on selected items and input
+
+useDebounce(value, delay) – debounces input values
+
+useMultiSelect() – handles state and interactions of the multi-select component
+
+License
+This project is created for Lobox Frontend Assignment purposes.
+
+```
