@@ -1,16 +1,31 @@
-@import '@/styles/mixins.scss';
-@import '@/styles/tokens.scss';
+@import "@/styles/mixins.scss";
+@import "@/styles/tokens.scss";
 
 .chip {
   @include flex(row, nowrap, center, center);
+  gap: 6px;
+  height: 32px;
+  padding: 0 $spacing-medium;
   background: $color-bg-chip;
+  color: $color-primary;
   @include border-radius($radius-large);
-  @include spacing(4px, 8px);
-  @include typography($font-size-medium);
-}
+  @include typography($font-size-medium, $font-weight-semibold);
+  transition: background 0.2s ease;
 
-.remove {
-  margin-left: $spacing-small;
-  cursor: pointer;
-  font-weight: bold;
+  .remove {
+    width: 18px;
+    height: 18px;
+    @include flex;
+    justify-content: space-evenly;
+    background: $color-primary-chip-remove;
+    color: $color-primary;
+    @include typography(14px, bold);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: $color-primary-remove-hover;
+    }
+  }
 }

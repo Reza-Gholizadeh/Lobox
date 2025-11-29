@@ -1,22 +1,32 @@
-// Spacing
+// === Spacing ===
 $spacing-small: 4px;
 $spacing-medium: 8px;
 $spacing-large: 16px;
 
-// Border radius
+// === Border Radius ===
 $radius-small: 4px;
-$radius-medium: 6px;
+$radius-medium: 8px;
 $radius-large: 12px;
 
-// Colors
-$color-border: #ccc;
-$color-border-light: #ddd;
-$color-bg-chip: #eee;
-$color-bg-dropdown: #fff;
-$color-hover: #f0f0f0;
-$color-highlight: #e0f0ff;
+// === Colors ===
+$color-border: #d0d0d0;
+$color-border-light: #e5e5e5;
+$color-bg-chip: rgba(94, 111, 255, 0.12);
+$color-bg-dropdown: #ffffff;
+$color-hover: #f5f7ff;
+$color-highlight: #eef0ff;
+$color-primary: #5e6fff;
+$color-primary-light: rgba(94, 111, 255, 0.15);
+$color-primary-chip-remove: rgba(94, 111, 255, 0.25);
+$color-primary-remove-hover: rgba(94, 111, 0.4);
 
-// Typography
+// === Typography ===
 $font-size-small: 12px;
 $font-size-medium: 14px;
 $font-size-large: 16px;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+
+// === Shadow ===
+$shadow-dropdown: 0 10px 30px rgba(0, 0, 0, 0.08);
+$shadow-focus: 0 0 0 3px $color-primary-light;

@@ -1,52 +1,106 @@
-@import '@/styles/mixins.scss';
-@import '@/styles/tokens.scss';
+@import "@/styles/mixins.scss";
+@import "@/styles/tokens.scss";
 
 .container {
   position: relative;
-  width: 300px;
+  width: 100%;
+  max-width: 420px;
+  &.isOpen {
+    .chevron {
+      color: $color-primary;
+    }
+  }
 }
 
-.inputWrapper {
-  @include flex(row, wrap, flex-start, center);
-  border: 1px solid $color-border;
-  @include spacing($spacing-medium);
-  @include border-radius($radius-medium);
-  min-height: 40px;
+.chipsWrapper {
+  @include flex(row, wrap, flex-start, flex-start);
   gap: $spacing-small;
+  margin-bottom: $spacing-medium;
+  padding: 0 $spacing-small;
+}
+
+.inputBox {
+  position: relative;
+  padding: $spacing-medium $spacing-large;
+  border: 1.5px solid $color-border-light;
+  @include border-radius($radius-large);
+  background: white;
+  transition: all 0.2s ease;
+  cursor: text;
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: $shadow-focus;
+  }
 }
 
 .input {
-  flex: 1;
+  width: 100%;
   border: none;
   outline: none;
-  min-width: 80px;
+  background: transparent;
+  @include typography($font-size-medium);
+  color: #333;
+
+  &::placeholder {
+    color: #999;
+  }
 }
 
 .dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + $spacing-small);
   left: 0;
-  width: 100%;
-  border: 1px solid $color-border-light;
-  @include border-radius($radius-medium);
+  right: 0;
   background: $color-bg-dropdown;
-  margin-top: $spacing-small;
-  padding: 4px 0;
-  z-index: 10;
-  max-height: 150px;
+  border: 1px solid $color-border-light;
+  @include border-radius($radius-large);
+  box-shadow: $shadow-dropdown;
+  z-index: 1000;
+  max-height: 300px;
   overflow-y: auto;
+  padding: $spacing-small 0;
 }
 
 .dropdownItem {
-  padding: 6px 12px;
+  @include flex(row, nowrap, space-between, center);
+  padding: 11px $spacing-large;
   cursor: pointer;
   @include typography($font-size-medium);
+
+  &:hover {
+    background-color: $color-hover;
+  }
 
   &.highlighted {
     background-color: $color-highlight;
   }
+}
 
-  &:hover {
-    background-color: $color-hover;
+.itemLabel {
+  flex: 1;
+}
+
+.checkIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+
+  path {
+    fill: $color-primary;
+  }
+}
+
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: $spacing-large;
+  color: #999;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
+  .container.isOpen &,
+  .inputBox:focus-within & {
+    color: $color-primary;
   }
 }

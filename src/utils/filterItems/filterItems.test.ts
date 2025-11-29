@@ -2,38 +2,33 @@ import { describe, expect, it } from "vitest";
 import { filterItems } from ".";
 import { MultiSelectItem } from "@/components/multiSelect/MultiSelect.type";
 
-const items: MultiSelectItem[] = [
-  { id: "1", label: "Apple" },
-  { id: "2", label: "Banana" },
-  { id: "3", label: "Orange" },
-];
-
-const selected: MultiSelectItem[] = [{ id: "2", label: "Banana" }];
-
 describe("filterItems", () => {
-  it("should remove selected items", () => {
-    const result = filterItems(items, selected, "");
-    expect(result).toEqual([
-      { id: "1", label: "Apple" },
-      { id: "3", label: "Orange" },
-    ]);
+  const items: MultiSelectItem[] = [
+    { id: "1", label: "Apple" },
+    { id: "2", label: "Banana" },
+    { id: "3", label: "Orange" },
+  ];
+
+  it("should return all items when input is empty (regardless of selection)", () => {
+    const result = filterItems(items, "");
+    expect(result).toEqual(items);
   });
 
-  it("should filter by input text case-insensitively", () => {
-    const result = filterItems(items, [], "an");
+  it("should filter items case-insensitively based on input", () => {
+    const result = filterItems(items, "an");
     expect(result).toEqual([
       { id: "2", label: "Banana" },
       { id: "3", label: "Orange" },
     ]);
   });
 
-  it("should return empty array if no match", () => {
-    const result = filterItems(items, [], "zzz");
+  it("should return empty array when no items match the query", () => {
+    const result = filterItems(items, "xyz");
     expect(result).toEqual([]);
   });
 
-  it("should remove selected items and filter by input", () => {
-    const result = filterItems(items, selected, "ap");
+  it("should be case insensitive", () => {
+    const result = filterItems(items, "AP");
     expect(result).toEqual([{ id: "1", label: "Apple" }]);
   });
 });

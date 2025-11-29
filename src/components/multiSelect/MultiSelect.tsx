@@ -1,92 +1,147 @@
-import React, { KeyboardEvent, ChangeEvent } from "react";
-import { filterItems } from "@/utils";
-import useDebounce from "@/hooks/useDebounce";
+import React, { KeyboardEvent, ChangeEvent, useRef } from "react";
 import styles from "./MultiSelect.module.scss";
-import { useMultiSelect } from "./useMultiSelect";
-import type { MultiSelectItem } from "./MultiSelect.type";
 import { Chip } from "../chip";
-import { handleArrowKeys, handleEnterKey } from "@/utils/keyboard";
+import { useMultiSelect } from "./useMultiSelect";
+import { filterItems } from "@/utils/filterItems";
+import { MultiSelectItem } from "./MultiSelect.type";
+import { Check, ChevronIcon } from "@/assets/icon";
 
 export const MultiSelect: React.FC = () => {
   const { state, dispatch, containerRef } = useMultiSelect();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const displayItems = filterItems(state.items, state.inputValue);
 
-  const debouncedInput = useDebounce(state.inputValue);
-
-  const filteredItems = filterItems(
-    state.items,
-    state.selected,
-    debouncedInput
-  );
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "SET_INPUT", payload: event.target.value });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "SET_INPUT", payload: e.target.value });
     dispatch({ type: "SET_OPEN", payload: true });
   };
 
   const handleSelectItem = (item: MultiSelectItem) => {
-    dispatch({ type: "SELECT_ITEM", payload: item });
+    const isSelected = state.selected.some((s) => s.id === item.id);
+    if (isSelected) {
+      dispatch({ type: "REMOVE_ITEM", payload: item.id });
+    } else {
+      dispatch({ type: "SELECT_ITEM", payload: item });
+    }
+    dispatch({ type: "CLEAR_INPUT" });
+    dispatch({ type: "RESET_HIGHLIGHT" });
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-  switch (e.key) {
-    case "ArrowDown":
-    case "ArrowUp":
-      e.preventDefault();
-      handleArrowKeys(e.key as "ArrowUp" | "ArrowDown", state, dispatch);
-      break;
-    case "Enter":
-      e.preventDefault();
-      handleEnterKey(state, dispatch);
-      break;
-    case "Escape":
-      dispatch({ type: "SET_OPEN", payload: false });
-      dispatch({ type: "RESET_HIGHLIGHT" });
-      break;
-    case "Backspace":
-      if (state.inputValue === "" && state.selected.length) {
-        const last = state.selected[state.selected.length - 1];
-        dispatch({ type: "REMOVE_ITEM", payload: last.id });
-      }
-      break;
-  }
-};
+    if (!state.isOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      dispatch({ type: "SET_OPEN", payload: true });
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        if (displayItems.length === 0) return;
+
+        const next = state.highlightedIndex + 1;
+        dispatch({
+          type: "SET_HIGHLIGHT",
+          payload: next >= displayItems.length ? 0 : next,
+        });
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        if (displayItems.length === 0) return;
+
+        const prev = state.highlightedIndex - 1;
+        dispatch({
+          type: "SET_HIGHLIGHT",
+          payload: prev < 0 ? displayItems.length - 1 : prev,
+        });
+        break;
+
+      case "Enter":
+        e.preventDefault();
+
+        if (
+          state.highlightedIndex >= 0 &&
+          displayItems[state.highlightedIndex]
+        ) {
+          handleSelectItem(displayItems[state.highlightedIndex]);
+        } else if (state.inputValue.trim() && displayItems.length === 0) {
+          const newItem: MultiSelectItem = {
+            id: Date.now().toString(),
+            label: state.inputValue.trim(),
+          };
+          dispatch({ type: "ADD_ITEM", payload: newItem });
+          dispatch({ type: "CLEAR_INPUT" });
+        }
+        break;
+
+      case "Escape":
+        dispatch({ type: "SET_OPEN", payload: false });
+        dispatch({ type: "RESET_HIGHLIGHT" });
+        break;
+
+      case "Backspace":
+        if (state.inputValue === "" && state.selected.length > 0) {
+          const last = state.selected[state.selected.length - 1];
+          dispatch({ type: "REMOVE_ITEM", payload: last.id });
+        }
+        break;
+    }
+  };
 
   return (
     <div className={styles.container} ref={containerRef}>
-      <div className={styles.inputWrapper}>
-        {state.selected.map((item) => (
-          <Chip
-            key={item.id}
-            item={item}
-            onRemove={(id) => dispatch({ type: "REMOVE_ITEM", payload: id })}
-          />
-        ))}
+      {state.selected.length > 0 && (
+        <div className={styles.chipsWrapper}>
+          {state.selected.map((item) => (
+            <Chip
+              key={item.id}
+              item={item}
+              onRemove={() =>
+                dispatch({ type: "REMOVE_ITEM", payload: item.id })
+              }
+            />
+          ))}
+        </div>
+      )}
 
+      <div
+        className={styles.inputBox}
+        onClick={() => inputRef.current?.focus()}
+      >
         <input
+          ref={inputRef}
           className={styles.input}
           value={state.inputValue}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Type and press Enter..."
           onFocus={() => dispatch({ type: "SET_OPEN", payload: true })}
+          placeholder={
+            state.selected.length === 0 ? "Search or create new..." : ""
+          }
         />
+        <ChevronIcon isOpen={state.isOpen} className={styles.chevron} />
       </div>
 
-      {state.isOpen && (
-        <div className={styles.dropdown} role="listbox">
-          {filteredItems.map((item, index) => (
-            <div
-              key={item.id}
-              className={`${styles.dropdownItem} ${
-                index === state.highlightedIndex ? styles.highlighted : ""
-              }`}
-              onClick={() => handleSelectItem(item)}
-              role="option"
-              aria-selected={state.selected.some((s) => s.id === item.id)}
-            >
-              {item.label}
-            </div>
-          ))}
+      {state.isOpen && displayItems.length > 0 && (
+        <div className={styles.dropdown}>
+          {displayItems.map((item, index) => {
+            const isSelected = state.selected.some((s) => s.id === item.id);
+
+            return (
+              <div
+                key={item.id}
+                className={`
+                  ${styles.dropdownItem}
+                  ${index === state.highlightedIndex ? styles.highlighted : ""}
+                `}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleSelectItem(item)}
+              >
+                <span className={styles.itemLabel}>{item.label}</span>
+                {isSelected && <Check />}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
